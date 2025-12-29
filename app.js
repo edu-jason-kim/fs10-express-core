@@ -1,22 +1,19 @@
+import cookieParser from "cookie-parser";
 import express from "express";
+import logger from "./middlewares/logger.js";
+import productRouter from "./routes/product.route.js";
+import userRouter from "./routes/user.route.js";
 
 const app = express();
 
-app.get("/", (req, res, next) => {
-  res.json({ message: "안녕, Express!!@" });
-});
+// middlewares
+app.use(cookieParser());  // 3rd party middleware
+app.use(express.json());  // built-in middleware
+app.use(logger);          // custom middleware
 
-function middlewareA(req, res, next) {
-  console.log("aaaa");
-  next();
-}
-
-function middlewareB(req, res, next) {
-  console.log("bbbb");
-  res.json({ message: "안녕, Express!" });
-}
-
-app.get("/hello", middlewareA, middlewareB);
+// routes
+app.use("/products", productRouter);
+app.use("/users", userRouter);
 
 app.listen(3000, () => {
   console.log("Server is listening on port 3000");
